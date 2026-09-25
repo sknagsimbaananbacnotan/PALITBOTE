@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Palit-Bote Monitoring | SK Nagsimbaanan</title>
+<style>
+:root{--green:#166534;--green2:#15803d;--pale:#f0fdf4;--ink:#172033;--muted:#667085;--line:#d0d5dd;--red:#b42318;--amber:#b54708;--blue:#175cd3}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f6f8f7;color:var(--ink)}
+header{background:linear-gradient(135deg,#14532d,#15803d);color:white;padding:22px}.shell{max-width:1500px;margin:auto}
+h1{margin:0;font-size:25px}.subtitle{opacity:.9;margin-top:5px;font-size:13px}
+nav{background:#fff;border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:20}.tabs{display:flex;gap:5px;padding:8px;overflow:auto}.tab{padding:10px 14px;border:0;background:transparent;border-radius:8px;font-weight:700;white-space:nowrap}.tab.active{background:#dcfce7;color:#166534}
+main{padding:18px}.page{display:none}.page.active{display:block}.cards{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.card,.box{background:white;border:1px solid #e4e7ec;border-radius:12px;padding:14px;box-shadow:0 1px 4px #1018280a}.metric small{color:var(--muted);font-weight:700}.metric strong{display:block;font-size:25px;margin-top:7px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+h2{font-size:17px;margin:0 0 12px}label{font-size:11px;color:var(--muted);font-weight:700;display:block;margin:8px 0 5px}
+input,select,textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:9px;background:#fff}button{border:0;border-radius:8px;padding:9px 12px;font-weight:700;cursor:pointer}
+.primary{background:var(--green2);color:#fff}.secondary{background:#ecfdf3;color:#166534}.danger{background:#fee4e2;color:#b42318}.blue{background:#eff8ff;color:#175cd3}
+.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.notice{font-size:12px;padding:9px 10px;border-radius:8px;background:#fffaeb;color:#7a2e0e;margin-top:10px}
+.tablewrap{overflow:auto;max-height:620px}table{width:100%;border-collapse:collapse;font-size:12px;min-width:1250px}th,td{padding:8px;border-bottom:1px solid #eaecf0;text-align:left;vertical-align:middle}th{position:sticky;top:0;background:#f9fafb;color:#475467;font-size:10px;text-transform:uppercase;z-index:2}
+.badge{display:inline-block;padding:4px 7px;border-radius:999px;font-size:10px;font-weight:800}.ok{background:#dcfae6;color:#067647}.warn{background:#fef0c7;color:#b54708}.bad{background:#fee4e2;color:#b42318}
+.redrow{background:#fff1f0}.toolbar{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}.toolbar input{max-width:350px}
+.rule{border-left:4px solid #16a34a;padding:8px 10px;background:#f0fdf4;margin:7px 0;font-size:12px}.smsPreview{white-space:pre-wrap;background:#f9fafb;border:1px solid #eaecf0;padding:12px;border-radius:8px;min-height:110px}
+@media(max-width:1100px){.cards{grid-template-columns:repeat(3,1fr)}.grid2{grid-template-columns:1fr}}@media(max-width:650px){.cards{grid-template-columns:1fr 1fr}.grid3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="shell"><h1>PALIT-BOTE PROGRAM — HOUSEHOLD RICE DISTRIBUTION MONITORING</h1><div class="subtitle">SK Nagsimbaanan • Maximum 2 exchanges per household • Web version based on FINAL NA ITO.xlsx</div></div></header>
+<nav><div class="shell tabs">
+<button class="tab active" onclick="showPage('monitor',this)">Monitoring</button>
+<button class="tab" onclick="showPage('sectors',this)">Sector Summary</button>
+<button class="tab" onclick="showPage('guide',this)">Guide / Rules</button>
+<button class="tab" onclick="showPage('sms',this)">Semaphore SMS</button>
+</div></nav>
+<main class="shell">
+<section id="monitor" class="page active">
+<div class="cards">
+<div class="card metric"><small>Initial Rice Stock</small><strong id="stockMetric">53 kg</strong></div>
+<div class="card metric"><small>Households Served</small><strong id="houseMetric">0</strong></div>
+<div class="card metric"><small>Total Claims</small><strong id="claimMetric">0</strong></div>
+<div class="card metric"><small>Bottles Collected</small><strong id="bottleMetric">0 kg</strong></div>
+<div class="card metric"><small>Rice Released</small><strong id="riceMetric">0 kg</strong></div>
+<div class="card metric"><small>Remaining Rice</small><strong id="remainMetric">0 kg</strong></div>
+</div>
+
+<div class="grid2">
+<div class="box"><h2>Add / Update Household</h2>
+<div class="grid3">
+<div><label>Household / Family Name</label><input id="family" placeholder="LAST NAME"></div>
+<div><label>Sector / Purok</label><select id="sector"><option value="">Select sector</option><option>Sector 1</option><option>Sector 2</option><option>Sector 3</option><option>Sector 4</option><option>Sector 5</option><option>Sector 6</option><option>Sector 7</option></select></div>
+<div><label>Representative</label><input id="rep"></div>
+<div><label>Mobile Number</label><input id="mobile" placeholder="09XXXXXXXXX"></div>
+<div><label>Remarks / Signature</label><input id="remarks" placeholder="SIGNED"></div>
+<div><label>Same-Name Verification</label><select id="verification"><option value="">Not applicable / pending</option><option>SAME HOUSEHOLD</option><option>ANOTHER HOUSEHOLD</option></select></div>
+</div>
+<div class="grid3">
+<div><label>Claim 1 Date</label><input id="c1date" type="date"></div>
+<div><label>Claim 1 Time</label><input id="c1time" type="time"></div>
+<div><label>Claim 1 Bottles Accepted</label><select id="c1kg"><option value="">No claim</option><option value="1">1 kg</option><option value="2">2 kg</option></select></div>
+<div><label>Claim 2 Date</label><input id="c2date" type="date"></div>
+<div><label>Claim 2 Time</label><input id="c2time" type="time"></div>
+<div><label>Claim 2 Bottles Accepted</label><select id="c2kg"><option value="">No claim</option><option value="1">1 kg</option><option value="2">2 kg</option></select></div>
+</div>
+<div class="actions"><button class="primary" onclick="saveHousehold()">Save Household</button><button class="secondary" onclick="clearForm()">Clear</button><button class="blue" onclick="exportCSV()">Export CSV</button><button class="danger" onclick="resetData()">Reset to Excel Sample</button></div>
+<div class="notice"><b>AUTO SMS ON:</b> Click Save Household after entering a NEW claim. Claim 1 automatically texts “1 claim remaining”; Claim 2 automatically texts “2/2 claims complete” to the mobile number entered.</div><div id="formNotice" class="notice">Same last names are automatically flagged. Choose SAME HOUSEHOLD or ANOTHER HOUSEHOLD before finalizing a duplicate-name record.</div>
+</div>
+
+<div class="box"><h2>Quick Claim Guide</h2>
+<div class="rule"><b>1 kg bottles</b> → 1 kg rice = 1 claim.</div>
+<div class="rule"><b>2 kg bottles</b> → 2 kg rice = 1 claim.</div>
+<div class="rule"><b>Maximum 2 claims</b> per household; maximum 2 kg accepted per claim.</div>
+<div class="rule"><b>4 kg brought at once:</b> accept only up to 2 kg for the current claim. Remaining 2 kg may be used for Claim 2 later, subject to stock and queue.</div>
+<div class="rule"><b>Different family member:</b> still counts under the same household.</div>
+<label>Change Initial Rice Stock (kg)</label><input id="stockInput" type="number" min="0" step="1"><div class="actions"><button class="secondary" onclick="setStock()">Update Stock</button></div>
+</div>
+</div>
+
+<div class="box" style="margin-top:14px"><div class="toolbar"><h2 style="margin:0">Household Monitoring Table</h2><input id="search" placeholder="Search name, representative, sector, control ID..." oninput="renderAll()"></div>
+<div class="tablewrap"><table><thead><tr>
+<th>No.</th><th>Household</th><th>Sector</th><th>Representative</th><th>Claim 1</th><th>C1 kg</th><th>C1 Rice</th><th>Claim 2</th><th>C2 kg</th><th>C2 Rice</th><th>Total Bottles</th><th>Total Rice</th><th>Status</th><th>Remarks</th><th>Control ID</th><th>Name Check</th><th>Eligibility</th><th>Actions</th>
+</tr></thead><tbody id="recordsBody"></tbody></table></div></div>
+</section>
+
+<section id="sectors" class="page"><div class="box"><h2>PALIT-BOTE — SECTOR CLAIM SUMMARY</h2><div class="tablewrap"><table style="min-width:850px"><thead><tr><th>Sector</th><th>Households Served</th><th>Total Claims</th><th>Bottles Collected</th><th>Rice Released</th><th>Share of Households</th><th>Rank Households</th><th>Rank Bottles</th><th>Rank Rice</th></tr></thead><tbody id="sectorBody"></tbody></table></div></div>
+<div class="cards" style="margin-top:14px"><div class="card metric"><small>Sector with Most Households</small><strong id="mostHouse">—</strong></div><div class="card metric"><small>Sector with Most Bottles</small><strong id="mostBottle">—</strong></div><div class="card metric"><small>Sector with Most Rice</small><strong id="mostRice">—</strong></div></div></section>
+
+<section id="guide" class="page"><div class="box"><h2>Monitoring Guide</h2>
+<div class="rule">All residents of Barangay Nagsimbaanan may join; youth are prioritized but participation is not exclusive.</div>
+<div class="rule">1 kg + 1 kg = 2 claims = 2 kg rice total.</div><div class="rule">1 kg + 2 kg or 2 kg + 1 kg = 2 claims = 3 kg rice total.</div>
+<div class="rule">2 kg + 2 kg = 2 claims = 4 kg rice total, the maximum possible for one household.</div>
+<div class="rule">FIRST COME, FIRST SERVED. Claim 2 is subject to remaining stock and should be processed after other waiting households are accommodated.</div>
+<div class="rule"><b>Status:</b> NO CLAIM YET / 1/2 CLAIMS - 1 LEFT / 2/2 CLAIMS - COMPLETE.</div>
+<div class="rule"><b>Same last name control:</b> duplicate family names are flagged red until staff confirms SAME HOUSEHOLD or ANOTHER HOUSEHOLD. ANOTHER HOUSEHOLD receives a new unique control ID.</div>
+</div></section>
+
+<section id="sms" class="page"><div class="grid2"><div class="box"><h2>Semaphore Notification</h2>
+<label>Serverless SMS API URL</label>
+<input id="apiUrl" placeholder="https://your-project.vercel.app/api/send-sms">
+<div class="actions"><button class="secondary" onclick="saveApiUrl()">Save API URL</button></div>
+<div class="notice">GitHub Pages hosts this dashboard. The Semaphore key stays securely in the serverless backend, not in this HTML.</div>
+<label>Household</label><select id="smsHouse" onchange="prepareSMS()"></select>
+<label>Mobile Number</label><input id="smsMobile">
+<label>Message</label><textarea id="smsText" rows="7"></textarea>
+<div class="actions"><button class="primary" onclick="sendSMS()">Send via Semaphore</button><button class="secondary" onclick="copySMS()">Copy Message</button></div><div id="smsNotice" class="notice">Add the household mobile number first. API key stays in semaphore_proxy.php, not in this HTML.</div>
+</div><div class="box"><h2>Automatic Message Preview</h2><div id="smsPreview" class="smsPreview">Select a household.</div>
+<div class="rule">Completed: “Kumpleto na ang inyong 2 claims…”</div><div class="rule">One claim used: “May 1 claim pa kayong natitira…”</div></div></div></section>
+</main>
+<script>
+const SAMPLE = [{"name": "COSTALES", "sector": "Sector 2", "representative": "ANTONINAN", "claim1Date": "2026-09-25", "claim1Kg": 2, "claim2Date": "2026-09-25", "claim2Kg": 2, "remarks": "SIGNED", "controlId": "S2-H001", "verification": "ANOTHER HOUSEHOLD"}, {"name": "OROPILLA", "sector": "Sector 2", "representative": "PALOMA", "claim1Date": "2026-09-25", "claim1Kg": 2, "claim2Date": "2026-09-25", "claim2Kg": 2, "remarks": "SIGNED", "controlId": "S2-H002", "verification": ""}, {"name": "COSTALES", "sector": "Sector 2", "representative": "JOHN DENVER", "claim1Date": "2026-09-25", "claim1Kg": 2, "claim2Date": "2026-09-25", "claim2Kg": 2, "remarks": "SIGNED", "controlId": "S2-H003", "verification": "ANOTHER HOUSEHOLD"}, {"name": "PABALAN", "sector": "Sector 3", "representative": "EDWARD", "claim1Date": "2026-09-25", "claim1Kg": 2, "claim2Date": "2026-09-25", "claim2Kg": 2, "remarks": "SIGNED", "controlId": "S3-H004", "verification": ""}, {"name": "SUIZA", "sector": "Sector 5", "representative": "JOSHUA", "claim1Date": "2026-09-25", "claim1Kg": 2, "claim2Date": "", "claim2Kg": "", "remarks": "SIGNED", "controlId": "S5-H005", "verification": ""}];
+const DATAKEY='palitBoteExcelStyleV2', STOCKKEY='palitBoteStockV2';
+let records=JSON.parse(localStorage.getItem(DATAKEY)||'null')||structuredClone(SAMPLE);
+let stock=Number(localStorage.getItem(STOCKKEY)||53);
+let editIndex=-1;
+const $=id=>document.getElementById(id);
+const SMS_API_URL = localStorage.getItem('palitBoteSmsApiUrl') || 'PASTE_YOUR_VERCEL_API_URL_HERE/api/send-sms';
+function showPage(id,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}
+function val(id){return $(id).value.trim()} function kg(x){return x===''?0:Number(x)}
+function claims(r){return (kg(r.claim1Kg)>0?1:0)+(kg(r.claim2Kg)>0?1:0)}
+function total(r){return kg(r.claim1Kg)+kg(r.claim2Kg)}
+function status(r){let a=kg(r.claim1Kg),b=kg(r.claim2Kg);if(!a&&!b)return'NO CLAIM YET';if(!a&&b)return'CHECK CLAIM ORDER';if(a&&b)return'2/2 CLAIMS - COMPLETE';return'1/2 CLAIMS - 1 LEFT'}
+function eligibility(r){let s=status(r);return s.includes('COMPLETE')?'COMPLETED':s.includes('1 LEFT')?'ELIGIBLE - 1 CLAIM LEFT':s}
+function duplicates(name,ignore=-1){return records.map((r,i)=>({r,i})).filter(x=>x.i!==ignore&&x.r.name.toUpperCase()===name.toUpperCase())}
+function nextControl(sector){let prefix=sector.replace('Sector ','S');let max=0;records.forEach(r=>{let m=(r.controlId||'').match(/-H(\d+)$/);if(m)max=Math.max(max,+m[1])});return prefix+'-H'+String(max+1).padStart(3,'0')}
+function nameCheck(r,i){let ds=duplicates(r.name,i);if(!ds.length)return'OK';if(r.verification==='ANOTHER HOUSEHOLD')return'VERIFIED - ANOTHER HOUSEHOLD';if(r.verification==='SAME HOUSEHOLD')return'VERIFIED - SAME HOUSEHOLD';return'VERIFY SAME LAST NAME'}
+async function saveHousehold(){
+ let r={name:val('family').toUpperCase(),sector:val('sector'),representative:val('rep').toUpperCase(),mobile:val('mobile'),remarks:val('remarks').toUpperCase(),verification:val('verification'),claim1Date:val('c1date'),claim1Time:val('c1time'),claim1Kg:val('c1kg'),claim2Date:val('c2date'),claim2Time:val('c2time'),claim2Kg:val('c2kg')};
+ if(!r.name||!r.sector||!r.representative){$('formNotice').textContent='Household name, sector, and representative are required.';return}
+ if(r.mobile&&!/^09\d{9}$/.test(r.mobile)){$('formNotice').textContent='Mobile number must use 09XXXXXXXXX format.';return}
+ if(r.claim2Kg&&!r.claim1Kg){$('formNotice').textContent='Claim 2 cannot be entered before Claim 1.';return}
+ let ds=duplicates(r.name,editIndex);
+ if(ds.length&&!r.verification){$('formNotice').textContent='VERIFY SAME LAST NAME: choose SAME HOUSEHOLD or ANOTHER HOUSEHOLD.';return}
+ if(ds.length&&r.verification==='SAME HOUSEHOLD'){
+   $('formNotice').textContent='This is the SAME HOUSEHOLD. Edit the original household row instead of creating another row.';return
+ }
+ let old=editIndex>=0?records[editIndex]:null;
+ r.controlId=old?.controlId || nextControl(r.sector);
+ let savedIndex;
+ if(editIndex>=0){records[editIndex]=r;savedIndex=editIndex;} else {records.push(r);savedIndex=records.length-1;}
+ persist();renderAll(); if($('apiUrl')) $('apiUrl').value=localStorage.getItem('palitBoteSmsApiUrl')||'';
+ const smsResult = await autoSendClaimSMS(savedIndex, old);
+ clearForm();
+ $('formNotice').textContent = smsResult;
+}
+async function autoSendClaimSMS(i, old){
+ const r=records[i], newCount=claims(r), oldCount=old?claims(old):0;
+ if(newCount<=oldCount) return 'Record saved. No new claim was submitted, so no SMS was sent.';
+ if(!r.mobile || !/^09\d{9}$/.test(r.mobile)) return `Claim ${newCount} was saved, but SMS was not sent because there is no valid 09XXXXXXXXX mobile number.`;
+
+ let message = newCount===1
+ ? `Magandang araw! Household No. ${r.controlId}: Na-record na ang inyong Claim 1 sa Palit Bote. May 1 claim pa kayong natitira. Maraming salamat sa pakikiisa!\n\n-SK Nagsimbaanan.`
+ : `Magandang araw! Household No. ${r.controlId}: Kumpleto na ang inyong 2 claims sa Palit Bote. Maraming salamat sa pakikiisa!\n\n-SK Nagsimbaanan.`;
+
+ try{
+   const res=await fetch(SMS_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({number:r.mobile,message})});
+   const data=await res.json();
+   if(res.ok) return newCount===1 ? 'Claim 1 saved. Automatic SMS sent: 1 claim remaining.' : 'Claim 2 saved. Automatic SMS sent: 2/2 claims complete.';
+   return 'Claim saved, but Semaphore SMS failed: '+(data.error||JSON.stringify(data));
+ }catch(e){
+   return 'Claim saved, but automatic SMS could not connect to Semaphore. Check the saved serverless SMS API URL and backend deployment.';
+ }
+}
+function editRecord(i){let r=records[i];editIndex=i;$('family').value=r.name;$('sector').value=r.sector;$('rep').value=r.representative;$('mobile').value=r.mobile||'';$('remarks').value=r.remarks||'';$('verification').value=r.verification||'';$('c1date').value=r.claim1Date||'';$('c1time').value=r.claim1Time||'';$('c1kg').value=r.claim1Kg||'';$('c2date').value=r.claim2Date||'';$('c2time').value=r.claim2Time||'';$('c2kg').value=r.claim2Kg||'';window.scrollTo({top:250,behavior:'smooth'})}
+function deleteRecord(i){if(confirm('Delete this household record?')){records.splice(i,1);persist();renderAll()}}
+function clearForm(){editIndex=-1;['family','rep','mobile','remarks','c1date','c1time','c2date','c2time'].forEach(x=>$(x).value='');['sector','verification','c1kg','c2kg'].forEach(x=>$(x).value='')}
+function persist(){localStorage.setItem(DATAKEY,JSON.stringify(records));localStorage.setItem(STOCKKEY,String(stock))}
+function setStock(){let n=Number($('stockInput').value);if(n>=0){stock=n;persist();renderAll()}}
+function resetData(){if(confirm('Reset browser data to the sample records from the Excel file?')){records=structuredClone(SAMPLE);stock=53;persist();renderAll()}}
+function renderAll(){
+ let q=val('search').toLowerCase();let rice=records.reduce((a,r)=>a+total(r),0), cs=records.reduce((a,r)=>a+claims(r),0);
+ $('stockMetric').textContent=stock+' kg';$('houseMetric').textContent=records.filter(r=>claims(r)>0).length;$('claimMetric').textContent=cs;$('bottleMetric').textContent=rice+' kg';$('riceMetric').textContent=rice+' kg';$('remainMetric').textContent=(stock-rice)+' kg';$('stockInput').value=stock;
+ $('recordsBody').innerHTML=records.map((r,i)=>({r,i})).filter(x=>[x.r.name,x.r.sector,x.r.representative,x.r.controlId].join(' ').toLowerCase().includes(q)).map(({r,i})=>{
+ let nc=nameCheck(r,i), red=nc==='VERIFY SAME LAST NAME'?'redrow':'', st=status(r);
+ return `<tr class="${red}"><td>${i+1}</td><td><b>${r.name}</b></td><td>${r.sector}</td><td>${r.representative}</td><td>${r.claim1Date||'—'} ${r.claim1Time||''}</td><td>${r.claim1Kg||'—'}</td><td>${r.claim1Kg||'—'}</td><td>${r.claim2Date||'—'} ${r.claim2Time||''}</td><td>${r.claim2Kg||'—'}</td><td>${r.claim2Kg||'—'}</td><td>${total(r)}</td><td>${total(r)}</td><td><span class="badge ${st.includes('COMPLETE')?'ok':st.includes('1 LEFT')?'warn':'bad'}">${st}</span></td><td>${r.remarks||''}</td><td><b>${r.controlId}</b></td><td><span class="badge ${nc==='OK'||nc.includes('VERIFIED')?'ok':'bad'}">${nc}</span></td><td>${eligibility(r)}</td><td><button class="blue" onclick="editRecord(${i})">Edit</button> <button class="secondary" onclick="goSMS(${i})">SMS</button> <button class="danger" onclick="deleteRecord(${i})">Delete</button></td></tr>`}).join('');
+ renderSectors();renderSMSList()
+}
+function renderSectors(){
+ let data=[1,2,3,4,5,6,7].map(n=>{let s='Sector '+n, rr=records.filter(r=>r.sector===s&&claims(r)>0);return {s,h:rr.length,c:rr.reduce((a,r)=>a+claims(r),0),b:rr.reduce((a,r)=>a+total(r),0),rice:rr.reduce((a,r)=>a+total(r),0)}}), totalH=data.reduce((a,x)=>a+x.h,0);
+ const rank=(arr,v)=>1+arr.filter(x=>x>v).length;
+ $('sectorBody').innerHTML=data.map(x=>`<tr><td><b>${x.s}</b></td><td>${x.h}</td><td>${x.c}</td><td>${x.b} kg</td><td>${x.rice} kg</td><td>${totalH?((x.h/totalH)*100).toFixed(1):0}%</td><td>${rank(data.map(y=>y.h),x.h)}</td><td>${rank(data.map(y=>y.b),x.b)}</td><td>${rank(data.map(y=>y.rice),x.rice)}</td></tr>`).join('');
+ let mh=Math.max(...data.map(x=>x.h)),mb=Math.max(...data.map(x=>x.b)),mr=Math.max(...data.map(x=>x.rice));
+ $('mostHouse').textContent=mh?data.find(x=>x.h===mh).s+' ('+mh+')':'NO DATA YET';$('mostBottle').textContent=mb?data.find(x=>x.b===mb).s+' ('+mb+' kg)':'NO DATA YET';$('mostRice').textContent=mr?data.find(x=>x.rice===mr).s+' ('+mr+' kg)':'NO DATA YET'
+}
+function saveApiUrl(){
+ let u=val('apiUrl').replace(/\/$/,'');
+ if(!/^https:\/\/.+\/api\/send-sms$/.test(u)){
+   $('smsNotice').textContent='Enter the full HTTPS endpoint ending in /api/send-sms.';
+   return;
+ }
+ localStorage.setItem('palitBoteSmsApiUrl',u);
+ $('smsNotice').textContent='SMS API URL saved. Reload the page before testing automatic SMS.';
+}
+function renderSMSList(){let cur=$('smsHouse').value;$('smsHouse').innerHTML='<option value="">Select household</option>'+records.map((r,i)=>`<option value="${i}">${r.controlId} — ${r.name}</option>`).join('');if(cur)$('smsHouse').value=cur}
+function goSMS(i){showPage('sms',document.querySelectorAll('.tab')[3]);$('smsHouse').value=i;prepareSMS()}
+function prepareSMS(){let i=$('smsHouse').value;if(i===''){return}let r=records[+i], st=status(r);$('smsMobile').value=r.mobile||'';let msg=st.includes('COMPLETE')?`Magandang araw! Household No. ${r.controlId}: Kumpleto na ang inyong 2 claims sa Palit Bote. Maraming salamat sa pakikiisa!\n\n-SK Nagsimbaanan.`:`Magandang araw! Household No. ${r.controlId}: Naitala na ang inyong Palit Bote claim. May 1 claim pa kayong natitira. Maraming salamat!\n\n-SK Nagsimbaanan.`;$('smsText').value=msg;$('smsPreview').textContent=msg}
+async function sendSMS(){let number=val('smsMobile'),message=val('smsText');if(!/^09\d{9}$/.test(number)){$('smsNotice').textContent='Add a valid 09XXXXXXXXX mobile number.';return}try{$('smsNotice').textContent='Sending...';let res=await fetch(SMS_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({number,message})});let data=await res.json();$('smsNotice').textContent=res.ok?'SMS request sent successfully.':'Semaphore error: '+(data.error||JSON.stringify(data))}catch(e){$('smsNotice').textContent='Could not reach semaphore_proxy.php. Use the deployed serverless SMS API endpoint.'}}
+function copySMS(){navigator.clipboard.writeText(val('smsText'));$('smsNotice').textContent='Message copied.'}
+function exportCSV(){let rows=[['No','Household / Family Name','Sector / Purok','Representative','Claim 1 Date','Claim 1 Bottles kg','Claim 1 Rice kg','Claim 2 Date','Claim 2 Bottles kg','Claim 2 Rice kg','Total Bottles kg','Total Rice kg','Claim Status','Remarks','Household Control ID','Duplicate / Name Check','Eligibility']];records.forEach((r,i)=>rows.push([i+1,r.name,r.sector,r.representative,r.claim1Date,r.claim1Kg,r.claim1Kg,r.claim2Date,r.claim2Kg,r.claim2Kg,total(r),total(r),status(r),r.remarks,r.controlId,nameCheck(r,i),eligibility(r)]));let csv=rows.map(r=>r.map(x=>'"'+String(x??'').replaceAll('"','""')+'"').join(',')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='Palit-Bote-Monitoring.csv';a.click()}
+renderAll();
+</script></body></html>
